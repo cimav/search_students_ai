@@ -16,6 +16,10 @@ class Student < ApplicationRecord
   has_many :terms, through: :term_students
   has_many :advances
 
+  has_many :student_mobilities
+  # no esta funcionando; necesita un preload
+  #has_one :last_student_mobility, -> { order(id: :desc) }, class_name: "StudentMobility"
+
   belongs_to :supervisor, class_name: "Staff", foreign_key: "supervisor", optional: true
   belongs_to :co_supervisor, class_name: "Staff", foreign_key: "co_supervisor", optional: true
   belongs_to :external_supervisor, class_name: "Staff", foreign_key: "external_supervisor", optional: true
@@ -139,6 +143,10 @@ class Student < ApplicationRecord
     age
   end
 
+  def last_student_mobility
+    student_mobilities.order(id: :desc).limit(1).first rescue nil
+  end
+
   def self.normalize_code_old(code)
     # Normaliza '2021-2' → 20212
     #return nil unless code.is_a?(String) && code.match?(/^20\d{2}-[12]$/)
@@ -158,7 +166,8 @@ class Student < ApplicationRecord
   def self.filtered(params)
 
     students = self
-         .includes(:program, :area, :supervisor, :co_supervisor, :external_supervisor, :these, :studies_plan, :country, term_students: :term)
+         .includes(:program, :area, :supervisor, :co_supervisor, :external_supervisor, :these, :studies_plan,
+                   :country, term_students: :term)
          .references(:program, :area, :supervisor, :co_supervisor, :external_supervisor, :term_students, :term)
 
     # 🔍 Por nombre
@@ -224,7 +233,7 @@ class Student < ApplicationRecord
     attributes = %w[
     id matrícula nombre apellido_paterno apellido_materno nacimiento edad género programa plan_estudios campus status area
     asesor co_asesor external_asesor semestres tesis fecha_defensa tesis_status
-    email_cimav email_personal cvu curp ine país
+    email_cimav email_personal país cvu curp ine mobilidad_institucion mobilidad_inicio mobilidad_fin mobilidad_actividades
   ]
 
     CSV.generate(col_sep: "\t", headers: true) do |csv|
@@ -254,10 +263,15 @@ class Student < ApplicationRecord
           student.these&.status_name,
           student.email_cimav,
           student.email,
+          student.country&.name,
           student.cvu,
           student.curp,
           student.ife,
-          student.country&.name
+          student.last_student_mobility&.institution,
+          student.last_student_mobility&.start_date&.strftime("%d/%m/%Y"),
+          student.last_student_mobility&.end_date&.strftime("%d/%m/%Y"),
+          student.last_student_mobility&.activities
+
         ]
       end
     end

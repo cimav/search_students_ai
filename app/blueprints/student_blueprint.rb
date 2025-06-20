@@ -13,13 +13,13 @@ class StudentBlueprint < Blueprinter::Base
   field :maternal_name
 
   field :age
+  field :last_student_mobility
 
   association :program, blueprint: ProgramBlueprint
   association :area, blueprint: AreaBlueprint
   association :country, blueprint: CountryBlueprint
   association :term_students, blueprint: TermStudentBlueprint
   association :studies_plan, blueprint: StudiesPlanBlueprint
-
   association :these, blueprint: TheseBlueprint
 
   association :supervisor, blueprint: StaffBlueprint

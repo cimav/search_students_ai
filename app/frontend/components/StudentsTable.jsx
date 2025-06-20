@@ -237,6 +237,10 @@ export default function StudentsTable({student, programIds, areaIds, advisor, st
             id: "Email Personal",
             header: "email_personal"
         }),
+        columnHelper.accessor((row) => row.country?.name || "—", {
+            id: "country",
+            header: "País"
+        }),
         columnHelper.accessor((row) => row.cvu || "—", {
             id: "cvu",
             header: "CVU"
@@ -249,9 +253,41 @@ export default function StudentsTable({student, programIds, areaIds, advisor, st
             id: "ine",
             header: "INE"
         }),
-        columnHelper.accessor((row) => row.country?.name || "—", {
-            id: "country",
-            header: "País"
+        columnHelper.accessor((row) => row.last_student_mobility?.institution || "—", {
+            id: "last_mobility_institution",
+            header: "Mobilidad Institución"
+        }),
+        columnHelper.accessor((row) => {
+            const raw = row.last_student_mobility?.start_date;
+            if (!raw) return "—";
+
+            const date = new Date(raw);
+            return date.toLocaleDateString("es-MX", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric"
+            });
+        },{
+            id: "last_mobility_start_date",
+            header: "Mobilidad Inicio"
+        }),
+        columnHelper.accessor((row) => {
+            const raw = row.last_student_mobility?.end_date;
+            if (!raw) return "—";
+
+            const date = new Date(raw);
+            return date.toLocaleDateString("es-MX", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric"
+            });
+        },{
+            id: "last_mobility_end_date",
+            header: "Mobilidad Fin"
+        }),
+        columnHelper.accessor((row) => row.last_student_mobility?.activities || "—", {
+            id: "last_mobility_activities",
+            header: "Mobilidad Actividades"
         })
 
     ]
