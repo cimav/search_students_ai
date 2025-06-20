@@ -1,0 +1,20 @@
+!!!
+%html
+  %head
+    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
+    %title SearchStudents
+    %meta{:content => "width=device-width,initial-scale=1", :name => "viewport"}/
+
+    = stylesheet_link_tag "application", "data-turbo-track": "reload"
+    = javascript_include_tag "application", type: "module", "data-turbo-track": "reload"
+
+    = csrf_meta_tags
+    = csp_meta_tag
+
+  %body{:class => "h-screen box-border overflow-hidden"}
+
+    -#%h2.text-3xl.text-red-500.font-bold Prueba directa de la existencia deTailwind en Rojo.
+
+    -# carga la vista root home#index
+    =yield
+

@@ -1,0 +1,7 @@
+%div.flex.items-center.justify-center.min-h-screen.bg-gray-100
+  %div.bg-white.shadow-md.rounded.p-8.w-full.max-w-md.text-center
+    %h1.text-2xl.font-semibold.text-gray-800.mb-4 Bienvenido
+    %p.text-sm.text-gray-600.mb-6 Accede con tu cuenta institucional
+
+    = link_to "/auth/google_oauth2", class: "bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded" do
+      %span Iniciar sesión con Google

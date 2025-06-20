@@ -1,0 +1,24 @@
+{
+  "name": "app",
+  "private": "true",
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.10",
+    "@tanstack/react-table": "^8.21.3",
+    "lucide-react": "^0.517.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "tailwindcss": "^4.1.10"
+  },
+  "scripts": {
+    "build:css": "npx @tailwindcss/cli -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --minify",
+    "build": "esbuild app/javascript/application.jsx --bundle --sourcemap --format=esm --loader:.js=jsx --loader:.jsx=jsx --outdir=app/assets/builds --public-path=/assets"
+  },
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/typography": "^0.5.16",
+    "autoprefixer": "^10.4.21",
+    "esbuild": "^0.25.5",
+    "postcss": "^8.5.6"
+  }
+}

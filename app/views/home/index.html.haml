@@ -1,0 +1,38 @@
+%div#encabezado_cimav.flex.items-center.justify-between.px-4.py-2.border-b-4.border-red-400.bg-white
+  %div.flex-shrink-0
+    = image_tag "logo-cimav.png", alt: "Logo Cimav", class: "h-10 w-auto"
+
+  %div.flex-1.text-center
+    %h1.text-xl.font-semibold.text-gray-800 Centro de Investigación en Materiales Avanzados
+    %p.text-sm.text-gray-600 Motor híbrido de consulta estructurada e inteligente de estudiantes del posgrado
+
+  - if current_user
+    = link_to logout_path, method: :delete, title: "Cerrar sesión", class: "group", style: "text-decoration: none;" do
+      %div#user_id.relative.flex.items-center.gap-2.justify-end.cursor-pointer
+        %span.text-sm.font-medium.text-gray-800.group-hover:underline= session[:user_name]
+        %div.relative
+          %img.rounded-full.h-8.w-8.border.border-gray-300.object-cover{
+            src: session[:user_image],
+            alt: "Foto perfil",
+            referrerpolicy: "no-referrer"
+          }
+
+
+%div.w-full.pl-1.pr-1
+  %div#main_view
+
+
+:javascript
+  function toggleDropdown() {
+    const menu = document.getElementById("userMenu");
+    menu.classList.toggle("hidden");
+  }
+
+  document.addEventListener("click", function (e) {
+    const menu = document.getElementById("userMenu");
+    const avatar = document.querySelector("img[onclick='toggleDropdown()']");
+    if (menu && !menu.contains(e.target) && !avatar.contains(e.target)) {
+      menu.classList.add("hidden");
+    }
+  });
+

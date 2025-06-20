@@ -1,0 +1,34 @@
+# MySQL. Versions 5.5.8 and up are supported.
+#
+# Install the MySQL driver
+#   gem install mysql2
+#
+# Ensure the MySQL gem is defined in your Gemfile
+#   gem "mysql2"
+#
+# And be sure to use new-style password hashing:
+#   https://dev.mysql.com/doc/refman/5.7/en/password-hashing.html
+#
+default: &default
+  adapter: mysql2
+  encoding: utf8mb4
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: root
+  password:
+  socket: /tmp/mysql.sock
+
+development:
+  <<: *default
+  host: fermi.cimav.edu.mx
+  database: sapos_production
+  username: admin
+  password: <%= ENV["FERMI_DATABASE_PASSWORD"] %>
+  socket: /tmp/mysql.sock
+
+production:
+  <<: *default
+  host: fermi.cimav.edu.mx
+  database: sapos_production
+  username: admin
+  password: <%= ENV["FERMI_DATABASE_PASSWORD"] %>
+  socket: /tmp/mysql.sock

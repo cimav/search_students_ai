@@ -1,0 +1,117 @@
+########################################
+# Bundler
+########################################
+/.bundle
+
+/Gemfile.lock
+
+/prompt.txt
+/restart.sh
+/dev.txt
+/dev.sh
+/.env
+
+# ▒▒▒ Ruby/Rails ▒▒▒
+*.rbc
+*.sassc
+*.pid
+*.sqlite3
+*.sqlite3-journal
+*.db
+*.log
+*.swp
+*.bak
+*.tmp
+*.orig
+*.rej
+
+########################################
+# Rails logs, temp files, and pids
+########################################
+/log/*
+!/log/.keep
+
+/tmp/*
+!/tmp/.keep
+/tmp/pids/*
+!/tmp/pids/
+/tmp/pids/.keep
+/tmp/storage/*
+!/tmp/storage/
+/tmp/storage/.keep
+
+########################################
+# Rails Active Storage (local dev files)
+/storage/*
+!/storage/.keep
+
+########################################
+# Environment files
+########################################
+/.env*
+!/.env*.erb
+.envrc
+
+########################################
+# Master key (credentials)
+/config/master.key
+/config/credentials.yml.enc
+
+########################################
+# Node and Yarn
+########################################
+/node_modules/
+/yarn-error.log
+.pnp.*
+.yarn/cache/
+.yarn/unplugged/
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+########################################
+# JS & CSS build output
+########################################
+/app/assets/builds/*
+!/app/assets/builds/.keep
+/public/assets
+/public/packs
+/public/packs-test
+/tmp/cache/webpacker
+.esbuild/
+
+# ▒▒▒ Node / JS bundling ▒▒▒
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+
+########################################
+# Editor/IDE-specific
+########################################
+# RubyMine
+.idea/
+
+# VSCode
+.vscode/
+
+# Sublime
+*.sublime-project
+*.sublime-workspace
+
+########################################
+# macOS
+########################################
+.DS_Store
+
+########################################
+# Debugging tools
+########################################
+.byebug_history
+.pry_history
+
+########################################
+# Code coverage tools
+########################################
+/coverage/
+
+/node_modules
