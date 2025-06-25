@@ -9,7 +9,7 @@ import {
     flexRender,
     createColumnHelper
 } from "@tanstack/react-table"
-
+import {formatDate} from "../utils/formatters";
 import {ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight, FileDown} from "lucide-react"
 
 
@@ -134,17 +134,7 @@ export default function StudentsTable({student, programIds, areaIds, advisor, st
             header: "Apellido materno"
         }),
         columnHelper.accessor(
-            (row) => {
-                const raw = row.date_of_birth;
-                if (!raw) return "—";
-
-                const date = new Date(raw);
-                return date.toLocaleDateString("es-MX", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric"
-                });
-            },
+            (row) => formatDate(row.date_of_birth),
             {
                 id: "date_of_birth",
                 header: "Nacimiento"
@@ -174,6 +164,41 @@ export default function StudentsTable({student, programIds, areaIds, advisor, st
             id: "status",
             header: "Estatus"
         }),
+        columnHelper.accessor(
+            (row) => formatDate(row.start_date),
+            {
+                id: "start_date",
+                header: "Inicio"
+            }
+        ),
+        columnHelper.accessor(
+            (row) => formatDate(row.end_date),
+            {
+                id: "end_date",
+                header: "Fin"
+            }
+        ),
+        columnHelper.accessor(
+            (row) => formatDate(row.graduation_date),
+            {
+                id: "graduation_date",
+                header: "Graduación"
+            }
+        ),
+        columnHelper.accessor(
+            (row) => formatDate(row.inactive_date),
+            {
+                id: "inactive_date",
+                header: "Inactive"
+            }
+        ),
+        columnHelper.accessor(
+            (row) => formatDate(row.definitivo),
+            {
+                id: "definitive_inactive_date",
+                header: "definitiva"
+            }
+        ),
         columnHelper.accessor((row) => row.area?.name || "—", {
             id: "area",
             header: "Area"
@@ -190,14 +215,19 @@ export default function StudentsTable({student, programIds, areaIds, advisor, st
             id: "external_supervisor",
             header: "Asesor externo"
         }),
-        columnHelper.accessor((row) => (row.term_students || []).map((ts) => ts.term?.code).join(", "), {
-            id: "terms",
+        // columnHelper.accessor((row) => (row.term_students || []).map((ts) => ts.term?.code).join(", "), {
+        columnHelper.accessor((row) => (row.all_term_codes) || "—", {
+            id: "terms_codes",
             header: "Semestres",
             cell: info => (
                 <div className="min-w-[280px] whitespace-normal break-words">
                     {info.getValue()}
                 </div>
             )
+        }),
+        columnHelper.accessor((row) => (row.first_term_code) || "—", {
+            id: "first_term_code",
+            header: "Primer semestre"
         }),
         columnHelper.accessor((row) => row.these?.title || "—", {
             id: "these",
@@ -209,17 +239,7 @@ export default function StudentsTable({student, programIds, areaIds, advisor, st
             )
         }),
         columnHelper.accessor(
-            (row) => {
-                const raw = row.these?.defence_date;
-                if (!raw) return "—";
-
-                const date = new Date(raw);
-                return date.toLocaleDateString("es-MX", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric"
-                });
-            },
+                (row) => formatDate(row.defence_date),
             {
                 id: "defence_date",
                 header: "Fecha Defensa"

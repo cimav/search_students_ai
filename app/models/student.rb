@@ -78,6 +78,9 @@ class Student < ApplicationRecord
     query
   }
 
+  has_many :ordered_terms, -> { order(:code) }, through: :term_students, source: :term
+  has_one :latest_student_mobility, -> { order(id: :desc) }, class_name: "StudentMobility"
+
   DELETED   = 0
   ACTIVE    = 1
   GRADUATED = 2
@@ -143,7 +146,29 @@ class Student < ApplicationRecord
     age
   end
 
+  def all_term_codes
+    @all_term_codes ||= (self[:grouped_term_codes] || ordered_terms.pluck(:code).join(", "))
+    #@all_term_codes ||= ordered_terms.pluck(:code).join(", ")
+  end
+
+  def first_term_code
+    @first_term_code ||= (self[:first_term_code] || all_term_codes.split(",").first&.strip)
+    #@first_term_code ||= ordered_terms.limit(1).pluck(:code).first
+    #all_term_codes.split(",").first&.strip
+  end
+
   def last_student_mobility
+    latest_student_mobility
+  end
+  def all_term_codes_old
+    @all_term_codes ||= term_students.includes(:term).map { |ts| ts.term&.code }.compact.join(", ")
+  end
+
+  def first_term_code_old
+    @first_term_code ||= all_term_codes.split(",").first&.strip
+  end
+
+  def last_student_mobility_old
     student_mobilities.order(id: :desc).limit(1).first rescue nil
   end
 
@@ -165,10 +190,21 @@ class Student < ApplicationRecord
 
   def self.filtered(params)
 
+    #students = self
+    #     .includes(:program, :area, :supervisor, :co_supervisor, :external_supervisor, :these, :studies_plan,
+    #                :country, :latest_student_mobility, term_students: :term)
+    #     .references(:program, :area, :supervisor, :co_supervisor, :external_supervisor, :term_students, :term)
+
     students = self
-         .includes(:program, :area, :supervisor, :co_supervisor, :external_supervisor, :these, :studies_plan,
-                   :country, term_students: :term)
-         .references(:program, :area, :supervisor, :co_supervisor, :external_supervisor, :term_students, :term)
+                 .includes(:program, :area, :supervisor, :co_supervisor, :external_supervisor, :these, :studies_plan,
+                           :country, :latest_student_mobility, term_students: :term)
+                 .joins("LEFT JOIN term_students ON term_students.student_id = students.id")
+                 .joins("LEFT JOIN terms ON terms.id = term_students.term_id")
+                 .select("students.*,
+           GROUP_CONCAT(terms.code ORDER BY terms.code SEPARATOR ', ') AS grouped_term_codes,
+           SUBSTRING_INDEX(GROUP_CONCAT(terms.code ORDER BY terms.code SEPARATOR ', '), ',', 1) AS first_term_code")
+                 .group("students.id")
+                 .references(:program, :area, :supervisor, :co_supervisor, :external_supervisor)
 
     # 🔍 Por nombre
     if params[:student].present?
@@ -231,8 +267,8 @@ class Student < ApplicationRecord
 
   def self.to_csv
     attributes = %w[
-    id matrícula nombre apellido_paterno apellido_materno nacimiento edad género programa plan_estudios campus status area
-    asesor co_asesor external_asesor semestres tesis fecha_defensa tesis_status
+    id matrícula nombre apellido_paterno apellido_materno nacimiento edad género programa plan_estudios campus status
+    inicio final graducacion inactivo definitiva area asesor co_asesor external_asesor semestres primer tesis fecha_defensa tesis_status
     email_cimav email_personal país cvu curp ine mobilidad_institucion mobilidad_inicio mobilidad_fin mobilidad_actividades
   ]
 
@@ -253,11 +289,17 @@ class Student < ApplicationRecord
           student.studies_plan&.code,
           student.campus_name,
           student.status_name,
+          student.start_date,
+          student.end_date,
+          student.graduation_date,
+          student.inactive_date,
+          student.definitive_inactive_date,
           student.area&.name,
           student.supervisor&.full_name,
           student.co_supervisor&.full_name,
           student.external_supervisor&.full_name,
-          student.term_students.map { |ts| ts.term&.code }.compact.join(", "),
+          student.all_term_codes, # term_students.map { |ts| ts.term&.code }.compact.join(", "),
+          student.first_term_code,
           student.these&.title,
           student.these&.defence_date&.strftime("%d/%m/%Y"),
           student.these&.status_name,

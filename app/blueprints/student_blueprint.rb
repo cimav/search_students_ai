@@ -3,7 +3,7 @@ class StudentBlueprint < Blueprinter::Base
   identifier :id
 
   fields :card, :first_name, :last_name, :last_name2, :status, :campus_id, :email, :email_cimav, :curp, :ife, :cvu,
-         :gender, :date_of_birth, :start_date
+         :gender, :date_of_birth, :start_date, :end_date, :graduation_date, :inactive_date, :definitive_inactive_date
 
   field :status_name
   field :campus_name
@@ -14,6 +14,9 @@ class StudentBlueprint < Blueprinter::Base
 
   field :age
   field :last_student_mobility
+
+  field :all_term_codes
+  field :first_term_code
 
   association :program, blueprint: ProgramBlueprint
   association :area, blueprint: AreaBlueprint

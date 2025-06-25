@@ -19,7 +19,7 @@ class Api::StudentsController < ApplicationController
       pagy, records = pagy(students, page: last_page, limit:(params[:per_page] || 100).to_i)
     end
 
-    if records.size > 0
+    if false # records.size > 0
       puts "#{records.first.id} | #{records.last.id}"
     end
 
@@ -35,7 +35,7 @@ class Api::StudentsController < ApplicationController
   def export
 
     students = Student.filtered(params)
-         .includes(:program, :studies_plan, :area, :supervisor, :co_supervisor, :external_supervisor, :these, :country, term_students: :term)
+         .includes(:program, :studies_plan, :area, :supervisor, :co_supervisor, :external_supervisor, :these, :country, :latest_student_mobility, term_students: :term)
 
     respond_to do |format|
       format.csv do
