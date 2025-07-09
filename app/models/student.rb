@@ -147,14 +147,24 @@ class Student < ApplicationRecord
   end
 
   def all_term_codes
-    @all_term_codes ||= (self[:grouped_term_codes] || ordered_terms.pluck(:code).join(", "))
-    #@all_term_codes ||= ordered_terms.pluck(:code).join(", ")
+    return @all_term_codes if defined?(@all_term_codes)
+
+    @all_term_codes = if self[:grouped_term_codes].present?
+                        self[:grouped_term_codes]
+                      else
+                        ordered_terms.load # Carga la relación
+                        ordered_terms.map(&:code).join(", ")
+                      end
   end
 
   def first_term_code
-    @first_term_code ||= (self[:first_term_code] || all_term_codes.split(",").first&.strip)
-    #@first_term_code ||= ordered_terms.limit(1).pluck(:code).first
-    #all_term_codes.split(",").first&.strip
+    return @first_term_code if defined?(@first_term_code)
+
+    @first_term_code = if self[:first_term_code].present?
+                         self[:first_term_code]
+                       else
+                         all_term_codes.split(",").first&.strip
+                       end
   end
 
   def last_student_mobility
@@ -190,11 +200,21 @@ class Student < ApplicationRecord
 
   def self.filtered(params)
 
-    #students = self
-    #     .includes(:program, :area, :supervisor, :co_supervisor, :external_supervisor, :these, :studies_plan,
-    #                :country, :latest_student_mobility, term_students: :term)
-    #     .references(:program, :area, :supervisor, :co_supervisor, :external_supervisor, :term_students, :term)
+    students = self
+         .includes(:program, :area, :supervisor, :co_supervisor, :external_supervisor, :these, :studies_plan,
+                    :country, :latest_student_mobility, term_students: :term)
+         .references(:program, :area, :supervisor, :co_supervisor, :external_supervisor, :term_students, :term)
 
+=begin
+    # Consulta base con pre-carga de asociaciones principales
+    students = includes(
+      :program, :area, :supervisor, :co_supervisor, :external_supervisor,
+      :these, :studies_plan, :country, :latest_student_mobility
+    ).left_joins(:terms)  # Usamos left_joins para términos en lugar de includes
+     .references(:program, :area, :supervisor, :co_supervisor, :external_supervisor)
+=end
+
+=begin
     students = self
                  .includes(:program, :area, :supervisor, :co_supervisor, :external_supervisor, :these, :studies_plan,
                            :country, :latest_student_mobility, term_students: :term)
@@ -205,6 +225,7 @@ class Student < ApplicationRecord
            SUBSTRING_INDEX(GROUP_CONCAT(terms.code ORDER BY terms.code SEPARATOR ', '), ',', 1) AS first_term_code")
                  .group("students.id")
                  .references(:program, :area, :supervisor, :co_supervisor, :external_supervisor)
+=end
 
     # 🔍 Por nombre
     if params[:student].present?
@@ -261,7 +282,8 @@ class Student < ApplicationRecord
       students = students.filtered_by_term_bounds(params[:term_start], params[:term_final])
     end
 
-    students.distinct
+    # Pre-cargamos los términos ordenados al final
+    students.preload(:ordered_terms).distinct
 
   end
 

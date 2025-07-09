@@ -19,10 +19,6 @@ class Api::StudentsController < ApplicationController
       pagy, records = pagy(students, page: last_page, limit:(params[:per_page] || 100).to_i)
     end
 
-    if false # records.size > 0
-      puts "#{records.first.id} | #{records.last.id}"
-    end
-
     render json: {
       students: StudentBlueprint.render_as_hash(records),
       total_pages: pagy.pages,
