@@ -63,7 +63,7 @@ export default function App() {
                             type="search"
                             value={studentQuery}
                             onChange={(e) => setStudentQuery(e.target.value)}
-                            className="h-8 text-sm px-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300  w-140"
+                            className="h-8 text-sm px-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300  w-140 shadow-sm hover:shadow-md transition"
                             placeholder="🔍 Nombre del estudiante"
                         />
                     </div>

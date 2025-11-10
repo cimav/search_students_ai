@@ -25,6 +25,7 @@ class Student < ApplicationRecord
   belongs_to :external_supervisor, class_name: "Staff", foreign_key: "external_supervisor", optional: true
 
   belongs_to :country
+  belongs_to :previous_institution, class_name: "PreviousInstitution", foreign_key: "previous_institution", optional: true
 
   scope :filtered_by_term_bounds, ->(start_code, end_code) {
     start_val = normalize_code(start_code) if start_code.present?
@@ -202,7 +203,7 @@ class Student < ApplicationRecord
 
     students = self
          .includes(:program, :area, :supervisor, :co_supervisor, :external_supervisor, :these, :studies_plan,
-                    :country, :latest_student_mobility, term_students: :term)
+                    :country, :previous_institution, :latest_student_mobility, term_students: :term)
          .references(:program, :area, :supervisor, :co_supervisor, :external_supervisor, :term_students, :term)
 
 =begin
@@ -291,7 +292,8 @@ class Student < ApplicationRecord
     attributes = %w[
     id matrícula nombre apellido_paterno apellido_materno nacimiento edad género programa plan_estudios campus status
     inicio final graducacion inactivo definitiva area asesor co_asesor external_asesor semestres primer tesis fecha_defensa tesis_status
-    email_cimav email_personal país cvu curp ine mobilidad_institucion mobilidad_inicio mobilidad_fin mobilidad_actividades
+    email_cimav email_personal país ciudad cvu curp ine mobilidad_institucion mobilidad_inicio mobilidad_fin mobilidad_actividades
+    institucion_previa tipo_grado_previo desc_grado_previo fecha_grado_previo
   ]
 
     CSV.generate(col_sep: "\t", headers: true) do |csv|
@@ -328,13 +330,18 @@ class Student < ApplicationRecord
           student.email_cimav,
           student.email,
           student.country&.name,
+          student.city,
           student.cvu,
           student.curp,
           student.ife,
           student.last_student_mobility&.institution,
           student.last_student_mobility&.start_date&.strftime("%d/%m/%Y"),
           student.last_student_mobility&.end_date&.strftime("%d/%m/%Y"),
-          student.last_student_mobility&.activities
+          student.last_student_mobility&.activities,
+          student.previous_institution&.name,
+          student.previous_degree_type,
+          student.previous_degree_desc,
+          student.previous_degree_date,
 
         ]
       end

@@ -261,6 +261,10 @@ export default function StudentsTable({student, programIds, areaIds, advisor, st
             id: "country",
             header: "País"
         }),
+        columnHelper.accessor((row) => row.city || "—", {
+            id: "city",
+            header: "Ciudad"
+        }),
         columnHelper.accessor((row) => row.cvu || "—", {
             id: "cvu",
             header: "CVU"
@@ -308,7 +312,27 @@ export default function StudentsTable({student, programIds, areaIds, advisor, st
         columnHelper.accessor((row) => row.last_student_mobility?.activities || "—", {
             id: "last_mobility_activities",
             header: "Mobilidad Actividades"
-        })
+        }),
+
+        columnHelper.accessor((row) => row.previous_institution?.name || "—", {
+            id: "previous_institution",
+            header: "Institución previa"
+        }),
+        columnHelper.accessor((row) => row.previous_degree_type || "—", {
+            id: "previous_degree_type",
+            header: "Tipo"
+        }),
+        columnHelper.accessor((row) => row.previous_degree_desc || "—", {
+            id: "previous_degree_desc",
+            header: "Descripción"
+        }),
+        columnHelper.accessor(
+            (row) => formatDate(row.previous_degree_date),
+            {
+                id: "previous_degree_date",
+                header: "Fecha"
+            }
+        ),
 
     ]
 
@@ -438,7 +462,7 @@ export default function StudentsTable({student, programIds, areaIds, advisor, st
                     <button
                         title="Exportar alumnos filtrados a CSV"
                         onClick={exportCSV}
-                        className="flex items-center gap-1 px-2 py-1 border border-gray-400 rounded hover:bg-gray-50 cursor-pointer text-xs text-gray-700"
+                        className="flex items-center gap-1 px-2 py-1 border border-gray-400 rounded hover:bg-sky-600 cursor-pointer text-xs text-gray-700 transition"
                     >
                         <FileDown size={16} className="text-gray-700"/>
                         <span>CSV</span>

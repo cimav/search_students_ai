@@ -3,7 +3,8 @@ class StudentBlueprint < Blueprinter::Base
   identifier :id
 
   fields :card, :first_name, :last_name, :last_name2, :status, :campus_id, :email, :email_cimav, :curp, :ife, :cvu,
-         :gender, :date_of_birth, :start_date, :end_date, :graduation_date, :inactive_date, :definitive_inactive_date
+         :gender, :date_of_birth, :start_date, :end_date, :graduation_date, :inactive_date, :definitive_inactive_date,
+         :city, :previous_degree_type, :previous_degree_desc, :previous_degree_date
 
   field :status_name
   field :campus_name
@@ -28,5 +29,7 @@ class StudentBlueprint < Blueprinter::Base
   association :supervisor, blueprint: StaffBlueprint
   association :co_supervisor, blueprint: StaffBlueprint
   association :external_supervisor, blueprint: StaffBlueprint
+
+  association :previous_institution, blueprint: PreviousInstitutionBlueprint
 
 end
