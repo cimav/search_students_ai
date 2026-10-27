@@ -22,6 +22,7 @@ class StudentBlueprint < Blueprinter::Base
   association :program, blueprint: ProgramBlueprint
   association :area, blueprint: AreaBlueprint
   association :country, blueprint: CountryBlueprint
+  association :state, blueprint: StateBlueprint
   association :term_students, blueprint: TermStudentBlueprint
   association :studies_plan, blueprint: StudiesPlanBlueprint
   association :these, blueprint: TheseBlueprint

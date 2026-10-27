@@ -31,7 +31,7 @@ class Api::StudentsController < ApplicationController
   def export
 
     students = Student.filtered(params)
-         .includes(:program, :studies_plan, :area, :supervisor, :co_supervisor, :external_supervisor, :these, :country, :latest_student_mobility, term_students: :term)
+         .includes(:program, :studies_plan, :area, :supervisor, :co_supervisor, :external_supervisor, :these, :country, :state, :latest_student_mobility, term_students: :term)
 
     respond_to do |format|
       format.csv do

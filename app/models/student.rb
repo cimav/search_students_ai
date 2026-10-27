@@ -25,6 +25,7 @@ class Student < ApplicationRecord
   belongs_to :external_supervisor, class_name: "Staff", foreign_key: "external_supervisor", optional: true
 
   belongs_to :country
+  belongs_to :state, optional: true
   belongs_to :previous_institution, class_name: "PreviousInstitution", foreign_key: "previous_institution", optional: true
 
   scope :filtered_by_term_bounds, ->(start_code, end_code) {
@@ -203,7 +204,7 @@ class Student < ApplicationRecord
 
     students = self
          .includes(:program, :area, :supervisor, :co_supervisor, :external_supervisor, :these, :studies_plan,
-                    :country, :previous_institution, :latest_student_mobility, term_students: :term)
+                    :country, :state, :previous_institution, :latest_student_mobility, term_students: :term)
          .references(:program, :area, :supervisor, :co_supervisor, :external_supervisor, :term_students, :term)
 
 =begin
@@ -292,7 +293,7 @@ class Student < ApplicationRecord
     attributes = %w[
     id matrícula nombre apellido_paterno apellido_materno nacimiento edad género programa plan_estudios campus status
     inicio final graducacion inactivo definitiva area asesor co_asesor external_asesor semestres primer tesis fecha_defensa tesis_status
-    email_cimav email_personal país ciudad cvu curp ine mobilidad_institucion mobilidad_inicio mobilidad_fin mobilidad_actividades
+    email_cimav email_personal país estado ciudad cvu curp ine mobilidad_institucion mobilidad_inicio mobilidad_fin mobilidad_actividades
     institucion_previa tipo_grado_previo desc_grado_previo fecha_grado_previo
   ]
 
@@ -313,11 +314,11 @@ class Student < ApplicationRecord
           student.studies_plan&.code,
           student.campus_name,
           student.status_name,
-          student.start_date,
-          student.end_date,
-          student.graduation_date,
-          student.inactive_date,
-          student.definitive_inactive_date,
+          student.start_date&.strftime("%d/%m/%Y"),
+          student.end_date&.strftime("%d/%m/%Y"),
+          student.graduation_date&.strftime("%d/%m/%Y"),
+          student.inactive_date&.strftime("%d/%m/%Y"),
+          student.definitive_inactive_date&.strftime("%d/%m/%Y"),
           student.area&.name,
           student.supervisor&.full_name,
           student.co_supervisor&.full_name,
@@ -330,6 +331,7 @@ class Student < ApplicationRecord
           student.email_cimav,
           student.email,
           student.country&.name,
+          student.state&.name,
           student.city,
           student.cvu,
           student.curp,
@@ -341,7 +343,7 @@ class Student < ApplicationRecord
           student.previous_institution&.name,
           student.previous_degree_type,
           student.previous_degree_desc,
-          student.previous_degree_date,
+          student.previous_degree_date&.strftime("%d/%m/%Y"),
 
         ]
       end

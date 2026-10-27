@@ -193,7 +193,7 @@ export default function StudentsTable({student, programIds, areaIds, advisor, st
             }
         ),
         columnHelper.accessor(
-            (row) => formatDate(row.definitivo),
+            (row) => formatDate(row.definitive_inactive_date),
             {
                 id: "definitive_inactive_date",
                 header: "definitiva"
@@ -261,6 +261,10 @@ export default function StudentsTable({student, programIds, areaIds, advisor, st
             id: "country",
             header: "País"
         }),
+        columnHelper.accessor((row) => row.state?.name || "—", {
+            id: "state",
+            header: "Estado"
+        }),
         columnHelper.accessor((row) => row.city || "—", {
             id: "city",
             header: "Ciudad"
@@ -281,31 +285,11 @@ export default function StudentsTable({student, programIds, areaIds, advisor, st
             id: "last_mobility_institution",
             header: "Mobilidad Institución"
         }),
-        columnHelper.accessor((row) => {
-            const raw = row.last_student_mobility?.start_date;
-            if (!raw) return "—";
-
-            const date = new Date(raw);
-            return date.toLocaleDateString("es-MX", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric"
-            });
-        },{
+        columnHelper.accessor((row) => formatDate(row.last_student_mobility?.start_date), {
             id: "last_mobility_start_date",
             header: "Mobilidad Inicio"
         }),
-        columnHelper.accessor((row) => {
-            const raw = row.last_student_mobility?.end_date;
-            if (!raw) return "—";
-
-            const date = new Date(raw);
-            return date.toLocaleDateString("es-MX", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric"
-            });
-        },{
+        columnHelper.accessor((row) => formatDate(row.last_student_mobility?.end_date), {
             id: "last_mobility_end_date",
             header: "Mobilidad Fin"
         }),
