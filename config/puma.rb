@@ -38,7 +38,7 @@ port ENV.fetch("PORT") { 3000 }
 environment rails_env
 
 # Specifies the `pidfile` that Puma will use.
-pidfile ENV.fetch("PIDFILE") { "tmp/pids/server.pid" }
+pidfile ENV.fetch("PIDFILE") { rails_env == "production" ? "tmp/puma.pid" : "tmp/pids/server.pid" }
 
 # Allow puma to be restarted by `bin/rails restart` command.
 plugin :tmp_restart

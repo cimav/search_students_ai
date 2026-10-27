@@ -7,16 +7,17 @@ class Api::StudentsController < ApplicationController
 
     students = Student.filtered(params)
 
-    # Total global (sin filtros)
-    total_students = Student.count
+    # Total global (sin filtros); cambia poco, no hace falta contarlo en cada búsqueda
+    total_students = Rails.cache.fetch("students/total_count", expires_in: 10.minutes) { Student.count }
 
     # 📊 Paginación
+    per_page = (params[:per_page] || 100).to_i
     begin
-      pagy, records = pagy(students, limit:(params[:per_page] || 100).to_i)
+      pagy, records = pagy(students, limit: per_page)
     rescue Pagy::OverflowError
       # Devuelve la última página disponible en vez de fallar
-      last_page = Pagy.new(count: students.count, page: 1, limit:(params[:per_page] || 100).to_i).pages
-      pagy, records = pagy(students, page: last_page, limit:(params[:per_page] || 100).to_i)
+      last_page = Pagy.new(count: students.count, page: 1, limit: per_page).pages
+      pagy, records = pagy(students, page: last_page, limit: per_page)
     end
 
     render json: {
@@ -31,7 +32,6 @@ class Api::StudentsController < ApplicationController
   def export
 
     students = Student.filtered(params)
-         .includes(:program, :studies_plan, :area, :supervisor, :co_supervisor, :external_supervisor, :these, :country, :state, :latest_student_mobility, term_students: :term)
 
     respond_to do |format|
       format.csv do

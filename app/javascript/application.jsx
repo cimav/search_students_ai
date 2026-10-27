@@ -1,6 +1,5 @@
-// app/javascript/application.js
+// app/javascript/application.jsx
 
-import "../frontend/index.css"
 import React from "react"
 import { createRoot } from "react-dom/client"
 import App from "../frontend/components/App"
